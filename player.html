@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>The Button Element</h2>
+<button type="button">Start</button>
+
+<script>
+    const context = new AudioContext();
+    document.addEventListener('DOMContentLoaded', () => {
+
+        context.audioWorklet.addModule('worklet-processor.js').then(() => {
+            
+            const oscillator = new AudioWorkletNode(context, 'worklet-processor');
+            
+            document.querySelector('button').addEventListener('click', async (event) => {
+                if (context.state !== 'running') {
+                    await context.resume()
+                }
+                const button = event.target
+                if (button.textContent === 'Start'){
+                    oscillator.connect(context.destination)
+                    button.textContent = 'Stop'
+                }
+                else {
+                    oscillator.disconnect(0)
+                    button.textContent = 'Start'
+                }
+            }, false)
+        });
+
+    })
+</script>
+</body>
+</html>
